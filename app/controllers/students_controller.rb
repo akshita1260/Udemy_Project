@@ -3,11 +3,8 @@ class StudentsController < ApplicationController
    
   def create
     student = Student.new(student_params)
-    if student.save
-      render json: {message: "Hey #{student.name}, your account created successfully!!"}
-    else
-      render json: {errors: student.errors.full_messages} 
-    end
+    return render json: {message: "Hey #{student.name}, your account created successfully!!"} if student.save
+    render json: {errors: student.errors.full_messages} 
   end
 
   def login
@@ -27,26 +24,18 @@ class StudentsController < ApplicationController
  
   def update
     student = Student.find(@current_student.id)
-    if student.update(student_params)
-    render json: {message: " Updated successfully!!", data:student}   
-    else
-      render json: {errors: instruct.errors.full_messages}
-    end  
+    return render json: {message: " Updated successfully!!", data:student} if student.update(student_params) 
+    render json: {errors: instruct.errors.full_messages}
   end
  
   def destroy
     student = Student.find(@current_student.id)    
-   if student.destroy
-    render json: { message: "Data of #{student.name} deleted successfully!" }
-    else
+    return render json: { message: "Data of #{student.name} deleted successfully!" } if student.destroy
       render json: { errors: instruct.errors.full_messages }
-    end
   end
  
-
   private
   def student_params
     params.permit(:name, :email, :password)
   end
-
 end
