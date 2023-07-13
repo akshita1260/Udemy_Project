@@ -1,59 +1,59 @@
 class EnrollmentsController < ApplicationController
-  # skip_before_action :authenticate_instructor
   before_action :authenticate_student
 
-
   def create
-    enroll = @current_student.enrollments.new(enroll_params)
-    if enroll.save
-      enroll.update(status: 'started')
-      render json: enroll
+    course = Course.find(params[:course_id])
+    if course.status == 'active'
+      enroll = @current_student.enrollments.new(enroll_params)
+      if enroll.save
+        enroll.update(status: 'started')
+        render json: enroll
+      else
+        render json: enroll.errors.full_messages
+      end
     else
-      render json: enroll.errors.full_messages
+      render json: { message: "can't enroll inactive course" }
     end
+    rescue ActiveRecord::RecordNotFound
+    render json: { message: "No record found with this id"}
   end
 
   def index
     enroll = Enrollment.all
+    return render json: {message: "No course found "} if enroll.empty?
     render json: enroll
   end
 
   def show
-   enroll = Enrollment.find(params[:id])
-   render json: enroll
+    enroll = Enrollment.find(params[:id])
+    return render json: enroll if enroll
+    rescue ActiveRecord::RecordNotFound
+    render json: {message: "no course find with #{params[:id]}"} 
   end
 
   def destroy
     enroll = Enrollment.find(params[:id])
-    if enroll.destroy
-      render json: { message: "enrollment cancle" }
-    else
-      render json: { errors: student.errors.full_messages }
-    end
-    
+    return render json: { message: "enrollment cancle" } if enroll.destroy
+    render json: { errors: student.errors.full_messages }
   end
 
   def update_student_course_status
     enroll = @current_student.enrollments.find(params[:id])
     if enroll
-      enroll.update(status: 'completed')
+      enroll.update(status: 'completed') 
       render json: {message: 'congartulations!! Your course is completed '}
     end
     rescue ActiveRecord::RecordNotFound
-      render json: {message: "no course find with #{params[:id]}"} 
+    render json: {message: "no course find with #{params[:id]}"} 
   end
 
   def search_in_my_course
-    if (params[:name] || params[:status])&&(!params[:name].blank? || !params[:status].blank?)
+    if (params[:name].present? || params[:status].present?)
       name = params[:name].strip if params[:name]
       status = params[:status].strip if params[:status] 
-
-      enroll = ActiveRecord::Base.connection.execute("SELECT enrollments.id as enrollment_id,course_id,courses.name,enrollments.status FROM courses INNER JOIN enrollments ON enrollments.course_id = courses.id INNER JOIN users ON users.id=enrollments.user_id WHERE enrollments.user_id=#{@current_student.id} AND enrollments.status LIKE '%#{status}%' AND courses.name LIKE '%#{name}%'")
-      if enroll.empty?
-        render json: {error: 'Record not found'}
-      else
-        render json: enroll
-      end
+      enroll = @current_student.enrollments.joins(:course).where("enrollments.status LIKE '%#{status}%' AND name LIKE '%#{name}%'")
+      return render json: {error: 'Record not found'} if enroll.empty?
+      render json: enroll
     else
       render json: {message: "Please provide required field"}
     end
@@ -63,6 +63,4 @@ class EnrollmentsController < ApplicationController
   def enroll_params
     params.permit( :course_id)
   end 
-
-  
 end

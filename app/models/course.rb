@@ -1,7 +1,7 @@
 class Course < ApplicationRecord
   belongs_to :user
   belongs_to :category
-  has_many :enrollments
+  has_many :enrollments,dependent: :destroy
   has_one_attached :video 
 
   validates :name,:description,:status,:video,:price, presence: true
