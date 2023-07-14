@@ -1,10 +1,12 @@
 class EnrollmentsController < ApplicationController
-  before_action :authenticate_student
+  before_action :authenticate_user
+  skip_before_action :check_instructor
+  before_action :check_student
 
   def create
     course = Course.find(params[:course_id])
     if course.status == 'active'
-      enroll = @current_student.enrollments.new(enroll_params)
+      enroll = @current_user.enrollments.new(enroll_params)
       if enroll.save
         enroll.update(status: 'started')
         render json: enroll
@@ -38,7 +40,7 @@ class EnrollmentsController < ApplicationController
   end
 
   def update_student_course_status
-    enroll = @current_student.enrollments.find(params[:id])
+    enroll = @current_user.enrollments.find(params[:id])
     if enroll
       enroll.update(status: 'completed') 
       render json: {message: 'congartulations!! Your course is completed '}
@@ -51,7 +53,8 @@ class EnrollmentsController < ApplicationController
     if (params[:name].present? || params[:status].present?)
       name = params[:name].strip if params[:name]
       status = params[:status].strip if params[:status] 
-      enroll = @current_student.enrollments.joins(:course).where("enrollments.status LIKE '%#{status}%' AND name LIKE '%#{name}%'")
+
+      enroll = @current_user.enrollments.joins(:course).where("enrollments.status LIKE '%#{status}%' AND name LIKE '%#{name}%'")
       return render json: {error: 'Record not found'} if enroll.empty?
       render json: enroll
     else

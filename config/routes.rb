@@ -18,8 +18,8 @@ Rails.application.routes.draw do
     get 'show_student',to: 'students#show'
     get 'update_student',to: 'students#update'
     get 'destroy_student',to: 'students#destroy'
-
-  resources :students
+    resources :students
+   # resource :users
 
   #....COURSE
     get 'course_by_category', to: 'courses#create_categorywise'
