@@ -4,6 +4,4 @@ class EnrollmentSerializer < ActiveModel::Serializer
   def course
     object.course.name
   end
-  attributes :id,:status 
-  
 end

@@ -4,34 +4,37 @@ class UsersController < ApiController
   skip_before_action :check_student
 
   def create
-    instruct = User.new(instructor_params)
-    return render json: {message: "Hey #{instruct.name}, your account created successfully!!"} if instruct.save   
-    render json: {errors: instruct.errors.full_messages}
+    user = User.new(instructor_params)
+    return render json: {message: "Hey #{user.name}, your account created successfully!!"} if user.save   
+    render json: {errors: user.errors.full_messages}
+    rescue ActiveRecord::SubclassNotFound
+       render json: {message: "value of type must be useror or Student"}
   end
 
   def login
-    instruct =User.find_by(email: params[:email],password: params[:password])
-    if instruct
-      token = jwt_encode(user_id: instruct.id)
-      render json: {message: "#{instruct.name} you logged in successfully...",token: token}, status: :ok
+    user =User.find_by(email: params[:email],password: params[:password])
+    if user
+      token = jwt_encode(user_id: user.id)
+      render json: {message: "#{user.name} you logged in successfully...",token: token}, status: :ok
     else
       render json: {message: "Invalid email and password"}
     end
   end
 
   def show
-    instruct = @current_user
-    render json: instruct
+    user = @current_user
+    render json: user
   end
 
   def update
-    instruct = @current_user
-    return render json: {message: " Updated successfully!!", data:instruct} if instruct.update(instructor_params)  
+    user = @current_user
+    return render json: {message: " Updated successfully!!", data:user} if user.update(instructor_params)  
+    render json: {errors: user.errors.full_messages}
   end
 
   def destroy
-    instruct = @current_user.destroy  
-    render json: { message: "Data of #{instruct.name} deleted successfully!" }
+    user = @current_user.destroy  
+    render json: { message: "Data of #{user.name} deleted successfully!" }
   end
 
   private

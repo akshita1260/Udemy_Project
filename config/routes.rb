@@ -25,7 +25,6 @@ Rails.application.routes.draw do
    resource :users
 
   #....COURSE
-    # get 'course_name', to: 'courses#course_by_name'
     get 'course_status', to: 'courses#course_by_status'
     get 'active_status', to: 'courses#course_by_active_status'
     get 'course_category', to: 'courses#course_by_category'

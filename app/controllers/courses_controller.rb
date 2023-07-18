@@ -29,6 +29,8 @@ class CoursesController < ApiController
   def update   
     if @course.update(course_params)
      render json: @course  
+   else
+    render json: {errors: @course.errors.full_messages}
     end
   end
 
