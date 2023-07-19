@@ -7,4 +7,11 @@ class User < ApplicationRecord
   validates :password, length: {minimum: 8},format: {with: /\A\S+\z/},presence: true
   validates :type,presence: true
 
+ def self.ransackable_attributes(auth_object = nil)
+    ["created_at", "email", "id", "name", "password", "type", "updated_at"]
+  end
+  
+  def self.ransackable_associations(auth_object = nil)
+    ["courses", "enrollments"]
+  end
 end

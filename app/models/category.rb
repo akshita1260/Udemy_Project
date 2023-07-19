@@ -1,10 +1,10 @@
 class Category < ApplicationRecord
   has_many :courses, dependent: :destroy
   
-  validates :name, presence: true,uniqueness: true
+  validates :category_name, presence: true,uniqueness: true
   before_save :spaces
 
   def spaces
-    self.name = name.strip()
+    self.category_name = category_name.strip()
   end
 end

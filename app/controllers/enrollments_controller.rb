@@ -18,7 +18,7 @@ class EnrollmentsController < ApiController
       render json: { message: "can't enroll inactive course" }
     end
     rescue ActiveRecord::RecordNotFound
-    render json: { message: "No record found with this id"}
+      render json: { message: "No record found with this id"}
   end
 
    def index
@@ -33,7 +33,7 @@ class EnrollmentsController < ApiController
   end
 
   def show
-     render json: @enroll 
+    render json: @enroll 
   end
 
   def destroy
@@ -48,7 +48,7 @@ class EnrollmentsController < ApiController
       render json: {message: 'congartulations!! Your course is completed '}
     end
     rescue ActiveRecord::RecordNotFound
-    render json: {message: "no course find with #{params[:id]}"} 
+      render json: {message: "no course find with #{params[:id]}"} 
   end
 
   private
@@ -59,7 +59,7 @@ class EnrollmentsController < ApiController
   def show_through_id()
     @enroll =@current_user.enrollments.find_by_id(params[:id])
     unless @enroll.present?
-    render json: {message: "no user found with this id"}
+      render json: {message: "no user found with this id"}
     end
   end
 end

@@ -8,7 +8,7 @@ class UsersController < ApiController
     return render json: {message: "Hey #{user.name}, your account created successfully!!"} if user.save   
     render json: {errors: user.errors.full_messages}
     rescue ActiveRecord::SubclassNotFound
-       render json: {message: "value of type must be useror or Student"}
+      render json: {message: "value of type must be useror or Student"}
   end
 
   def login
@@ -22,14 +22,12 @@ class UsersController < ApiController
   end
 
   def show
-    user = @current_user
-    render json: user
+    render json: @current_user
   end
 
   def update
-    user = @current_user
-    return render json: {message: " Updated successfully!!", data:user} if user.update(instructor_params)  
-    render json: {errors: user.errors.full_messages}
+    return render json: {data: @current_user} if  @current_user.update(instructor_params)  
+    render json: {errors:  @current_user.errors.full_messages}
   end
 
   def destroy
