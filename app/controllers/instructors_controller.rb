@@ -1,4 +1,0 @@
-class InstructorsController < ApiController
-  
-
-end

@@ -5,10 +5,14 @@ class UsersController < ApiController
 
   def create
     user = User.new(instructor_params)
-    return render json: {message: "Hey #{user.name}, your account created successfully!!"} if user.save   
-    render json: {errors: user.errors.full_messages}
-    rescue ActiveRecord::SubclassNotFound
-      render json: {message: "value of type must be useror or Student"}
+    if user.save
+      token = jwt_encode(user_id: user.id)
+      render json: {message: "Hey #{user.name}, your account created successfully!!", token: token} 
+    else
+      render json: {errors: user.errors.full_messages}
+    end
+      rescue ActiveRecord::SubclassNotFound
+      render json: {message: "value of type must be Instructor or Student"}
   end
 
   def login

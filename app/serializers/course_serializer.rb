@@ -8,4 +8,5 @@ class CourseSerializer < ActiveModel::Serializer
   def category
     object.category.category_name
   end
+
 end

@@ -1,8 +1,7 @@
 class EnrollmentsController < ApiController
-  before_action :authenticate_user
   skip_before_action :check_instructor
   before_action :check_student
-  before_action :show_through_id,only: [:show,:destroy]
+  before_action :show_through_id,only: [:show,:destroy,:update]
 
   def create
     course = Course.find(params[:course_id])
@@ -28,7 +27,7 @@ class EnrollmentsController < ApiController
       return render json: {error: 'Record not found'} if enroll.empty?
       render json: enroll
     else
-      render json: {message: "Please provide required field"}
+      render json: @current_user.enrollments.all
     end
   end
 
@@ -41,14 +40,12 @@ class EnrollmentsController < ApiController
     render json: {message: "Deleted successfully...."}
   end
 
-  def update_student_course_status
-    enroll = @current_user.enrollments.find(params[:id])
-    if enroll
-      enroll.update(status: 'completed') 
-      render json: {message: 'congartulations!! Your course is completed '}
+  def update
+    if @enroll.update(status: 'completed') 
+      render json: {message: 'congartulations!! Your course is completed ', data: @enroll}
+    else
+      render json: {errors: @course.errors.full_messages}
     end
-    rescue ActiveRecord::RecordNotFound
-      render json: {message: "no course find with #{params[:id]}"} 
   end
 
   private
@@ -59,7 +56,7 @@ class EnrollmentsController < ApiController
   def show_through_id()
     @enroll =@current_user.enrollments.find_by_id(params[:id])
     unless @enroll.present?
-      render json: {message: "no user found with this id"}
+      render json: {message: "no course found with this id"}
     end
   end
 end
