@@ -1,8 +1,6 @@
 class EnrollmentsController < ApiController
-  skip_before_action :check_instructor
-  before_action :check_student
   before_action :show_through_id,only: [:show,:destroy,:update]
-
+  before_action :authorization
   def create
     course = Course.find(params[:course_id])
     if course.status == 'active'
@@ -58,5 +56,9 @@ class EnrollmentsController < ApiController
     unless @enroll.present?
       render json: {message: "no course found with this id"}
     end
+  end
+
+  def authorization
+    authorize Enrollment
   end
 end

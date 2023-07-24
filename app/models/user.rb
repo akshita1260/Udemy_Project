@@ -14,4 +14,13 @@ class User < ApplicationRecord
   def self.ransackable_associations(auth_object = nil)
     ["courses", "enrollments"]
   end
+
+  def instructor?
+    type=="Instructor"
+  end
+
+ def student?
+    type=="Student"
+  end
+
 end

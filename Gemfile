@@ -17,6 +17,7 @@ gem "puma", "~> 5.0"
 gem 'devise'
 gem 'activeadmin'
 gem 'sass-rails'
+gem 'pundit'
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 gem 'sprockets', '<4'

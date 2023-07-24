@@ -1,10 +1,10 @@
 class UsersController < ApiController
   skip_before_action :authenticate_user,only: [:login, :create]
-  skip_before_action :check_instructor
-  skip_before_action :check_student
+  # skip_before_action :check_instructor
+  # skip_before_action :check_student
 
   def create
-    user = User.new(instructor_params)
+    user = User.new(user_params)
     if user.save
       token = jwt_encode(user_id: user.id)
       render json: {message: "Hey #{user.name}, your account created successfully!!", token: token} 
@@ -30,7 +30,7 @@ class UsersController < ApiController
   end
 
   def update
-    return render json: {data: @current_user} if  @current_user.update(instructor_params)  
+    return render json: {data: @current_user} if  @current_user.update(user_params)  
     render json: {errors:  @current_user.errors.full_messages}
   end
 
@@ -40,7 +40,7 @@ class UsersController < ApiController
   end
 
   private
-  def instructor_params
+  def user_params
     params.permit(:name, :email, :password, :type)
   end
 end

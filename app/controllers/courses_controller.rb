@@ -1,6 +1,5 @@
 class CoursesController < ApiController
-  skip_before_action :check_instructor, only: [:index]
-  skip_before_action :check_student
+  before_action :authorization
   before_action :show_through_id, only: [:update, :show, :destroy]
 
   def create
@@ -40,7 +39,6 @@ class CoursesController < ApiController
     render json: { message: "Course deleted successfully!" } 
   end
 
-
   private
 
   def course_params
@@ -63,5 +61,9 @@ class CoursesController < ApiController
     else
       render json: { message: 'Please provide required field' }
     end
+  end
+
+  def authorization
+    authorize Course
   end
 end

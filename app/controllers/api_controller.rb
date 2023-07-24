@@ -1,10 +1,10 @@
 class ApiController < ActionController::API
 	include JsonWebToken
+  include Pundit::Authorization
 
   before_action :authenticate_user
-  before_action :check_instructor
-  before_action :check_student
-
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  
   before_action do
     ActiveStorage::Current.url_options = { protocol: request.protocol, host: request.host, port: request.port }
   end
@@ -20,11 +20,12 @@ class ApiController < ActionController::API
       render json: {message: "First login yourself!!"}
   end
 
-  def check_instructor
-    return render json: {message: "Unauthorized access....."} unless @current_user.type == "Instructor"
+  def current_user
+    @current_user
   end
 
-  def check_student
-    return render json: {message: "Unauthorized access....."} unless @current_user.type == "Student"
+  
+  def user_not_authorized
+    render json: {message: "You are not authorized to perform this action."}
   end
 end

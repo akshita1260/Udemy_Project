@@ -177,6 +177,8 @@ GEM
       racc
     puma (5.6.6)
       nio4r (~> 2.0)
+    pundit (2.3.1)
+      activesupport (>= 3.0.0)
     racc (1.7.1)
     rack (2.2.7)
     rack-test (2.1.0)
@@ -289,6 +291,7 @@ DEPENDENCIES
   devise
   jwt
   puma (~> 5.0)
+  pundit
   rails (~> 7.0.6)
   rubocop-rails
   sass-rails
