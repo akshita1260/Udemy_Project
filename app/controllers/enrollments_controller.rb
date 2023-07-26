@@ -1,6 +1,7 @@
 class EnrollmentsController < ApiController
   before_action :show_through_id,only: [:show,:destroy,:update]
   before_action :authorization
+
   def create
     course = Course.find(params[:course_id])
     if course.status == 'active'
@@ -14,11 +15,11 @@ class EnrollmentsController < ApiController
     else
       render json: { message: "can't enroll inactive course" }
     end
-    rescue ActiveRecord::RecordNotFound
-      render json: { message: "No record found with this id"}
+  rescue ActiveRecord::RecordNotFound
+    render json: { message: "No record found with this id"}
   end
 
-   def index
+  def index
     if params[:name].present?
       name = params[:name].strip if params[:name]
       enroll = @current_user.enrollments.joins(:course).where("name LIKE '%#{name}%'")
@@ -34,8 +35,8 @@ class EnrollmentsController < ApiController
   end
 
   def destroy
-    @enroll.destroy
-    render json: {message: "Deleted successfully...."}
+    return render json: {message: "Deleted successfully...."} if @enroll.destroy
+    render json: {errors: @course.errors.full_messages}
   end
 
   def update
@@ -52,7 +53,7 @@ class EnrollmentsController < ApiController
   end 
 
   def show_through_id()
-    @enroll =@current_user.enrollments.find_by_id(params[:id])
+    @enroll = @current_user.enrollments.find_by_id(params[:id])
     unless @enroll.present?
       render json: {message: "no course found with this id"}
     end

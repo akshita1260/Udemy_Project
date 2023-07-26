@@ -16,15 +16,14 @@ class ApiController < ActionController::API
     header = header.split(" ").last if header
     decoded = jwt_decode(header)
     @current_user= User.find(decoded[:user_id])
-    rescue JWT::DecodeError
-      render json: {message: "First login yourself!!"}
+  rescue JWT::DecodeError
+    render json: {message: "First login yourself!!"}
   end
 
   def current_user
     @current_user
   end
 
-  
   def user_not_authorized
     render json: {message: "You are not authorized to perform this action."}
   end

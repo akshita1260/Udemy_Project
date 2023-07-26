@@ -1,7 +1,5 @@
 class UsersController < ApiController
   skip_before_action :authenticate_user,only: [:login, :create]
-  # skip_before_action :check_instructor
-  # skip_before_action :check_student
 
   def create
     user = User.new(user_params)
@@ -11,8 +9,8 @@ class UsersController < ApiController
     else
       render json: {errors: user.errors.full_messages}
     end
-      rescue ActiveRecord::SubclassNotFound
-      render json: {message: "value of type must be Instructor or Student"}
+  rescue ActiveRecord::SubclassNotFound
+    render json: {message: "value of type must be Instructor or Student"}
   end
 
   def login
@@ -35,8 +33,9 @@ class UsersController < ApiController
   end
 
   def destroy
-    user = @current_user.destroy  
-    render json: { message: "Data of #{user.name} deleted successfully!" }
+    return render json: { message: "Data of #{user.name} deleted successfully!" } if @current_user.destroy  
+    render json: {errors:  @current_user.errors.full_messages}
+
   end
 
   private

@@ -1,5 +1,5 @@
 class CoursesController < ApiController
-  before_action :authorization
+  before_action :authorization, except: [:index]
   before_action :show_through_id, only: [:update, :show, :destroy]
 
   def create
@@ -15,7 +15,7 @@ class CoursesController < ApiController
         return render json: {message: "No course found "} if course.empty?
         render json: course 
       else
-        render json: @current_user.courses.all
+        render json: Course.all
       end
     else
       search()
@@ -23,20 +23,17 @@ class CoursesController < ApiController
   end
 
   def show
-     render json: @course 
+    render json: @course 
   end
 
   def update   
-    if @course.update(course_params)
-     render json: @course  
-    else
-      render json: {errors: @course.errors.full_messages}
-    end
+    return render json: @course if @course.update(course_params)
+    render json: {errors: @course.errors.full_messages}
   end
 
   def destroy
-    @course.destroy
-    render json: { message: "Course deleted successfully!" } 
+    return render json: { message: "Course deleted successfully!" } if @course.destroy
+    render json: {errors: @course.errors.full_messages}
   end
 
   private
