@@ -18,6 +18,7 @@ class UsersController < ApiController
     if user
       token = jwt_encode(user_id: user.id)
       render json: {message: "#{user.name} you logged in successfully...",token: token}, status: :ok
+      GmailMailer.send_mail(params[:email]).deliver_now!
     else
       render json: {message: "Invalid email and password"}
     end

@@ -15,7 +15,7 @@ class CoursesController < ApiController
         return render json: {message: "No course found "} if course.empty?
         render json: course 
       else
-        render json: Course.all
+        render json: @current_user.course.all
       end
     else
       search()
